@@ -1,0 +1,287 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   DESIGN TOKENS
+   Palette : blanc cassé / encre quasi-noire / un seul accent cobalt.
+   Un bloc "nuit" (--ink) sert de fond pour les sections héros, en écho
+   au repère visuel fourni (bandeau sombre + cartes claires).
+   ========================================================================== */
+:root {
+  --paper: #f6f5f1;       /* fond général, blanc cassé neutre */
+  --surface: #ffffff;     /* cartes / formulaires */
+  --ink: #12141a;         /* texte principal, quasi noir */
+  --ink-soft: #12141a99;  /* texte secondaire (60%) */
+  --ink-faint: #12141a4d; /* texte tertiaire (30%) */
+  --line: #e6e3da;        /* bordures fines */
+  --line-strong: #d8d4c8;
+
+  --accent: #3452ff;      /* cobalt — seul accent de couleur du site */
+  --accent-ink: #0b0d16;  /* fond "nuit" des sections héros */
+  --accent-soft: #3452ff14;
+
+  --ok: #1f9d63;
+  --danger: #d64545;
+
+  --radius-s: 10px;
+  --radius-m: 16px;
+  --radius-l: 24px;
+
+  --shadow-card: 0 1px 2px rgba(18, 20, 26, 0.04), 0 12px 32px -16px rgba(18, 20, 26, 0.12);
+  --shadow-pop: 0 8px 24px -8px rgba(18, 20, 26, 0.18);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+::selection {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   PRIMITIVES RÉUTILISABLES
+   ========================================================================== */
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-card);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 999px;
+  padding: 11px 22px;
+  transition: transform 160ms ease, background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: #2540d6;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+.btn-ghost:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+}
+.btn-outline:hover {
+  border-color: var(--ink);
+}
+
+.field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.field-input {
+  width: 100%;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-s);
+  padding: 11px 14px;
+  font-size: 14px;
+  color: var(--ink);
+  transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+.field-input:focus {
+  outline: none;
+  background: var(--surface);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.chip {
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  color: var(--ink-soft);
+}
+
+/* ==========================================================================
+   ANIMATIONS — discrètes, utilisées avec parcimonie
+   ========================================================================== */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeup {
+  animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes rail-in {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.animate-rail {
+  transform-origin: top;
+  animation: rail-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fadeup,
+  .animate-rail {
+    animation: none;
+  }
+}
+
+/* Scrollbar discrète pour les zones défilantes de l'admin */
+.thin-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 999px;
+}
+
+/* ==========================================================================
+   HERO SECTION — orbes flottants, balayage lumineux, apparitions en cascade
+   ========================================================================== */
+
+.hero-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(70px);
+  opacity: 0.55;
+}
+
+.hero-orb-a {
+  width: 480px;
+  height: 480px;
+  top: -160px;
+  right: -100px;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  animation: orb-float-a 16s ease-in-out infinite;
+}
+
+.hero-orb-b {
+  width: 360px;
+  height: 360px;
+  bottom: -140px;
+  left: -80px;
+  background: radial-gradient(circle, #7c5cff 0%, transparent 70%);
+  animation: orb-float-b 20s ease-in-out infinite;
+}
+
+.hero-orb-c {
+  width: 260px;
+  height: 260px;
+  top: 40%;
+  left: 55%;
+  background: radial-gradient(circle, #2fd0d8 0%, transparent 70%);
+  opacity: 0.35;
+  animation: orb-float-c 24s ease-in-out infinite;
+}
+
+@keyframes orb-float-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-40px, 50px) scale(1.12); }
+}
+@keyframes orb-float-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(50px, -30px) scale(1.08); }
+}
+@keyframes orb-float-c {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.35; }
+  50% { transform: translate(-30px, -40px) scale(1.2); opacity: 0.55; }
+}
+
+.hero-sweep {
+  position: absolute;
+  inset: -20% -20%;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.06) 48%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.06) 52%,
+    transparent 60%
+  );
+  animation: sweep 9s ease-in-out infinite;
+}
+
+@keyframes sweep {
+  0% { transform: translateX(-30%); }
+  50% { transform: translateX(30%); }
+  100% { transform: translateX(-30%); }
+}
+
+.hero-fadeup {
+  opacity: 0;
+  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.hero-delay-1 { animation-delay: 0.05s; }
+.hero-delay-2 { animation-delay: 0.15s; }
+.hero-delay-3 { animation-delay: 0.28s; }
+.hero-delay-4 { animation-delay: 0.4s; }
+.hero-delay-5 { animation-delay: 0.52s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-orb-a, .hero-orb-b, .hero-orb-c, .hero-sweep {
+    animation: none;
+  }
+  .hero-fadeup {
+    opacity: 1;
+    animation: none;
+  }
+}
