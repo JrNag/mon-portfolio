@@ -26,8 +26,25 @@ const fraunces = Fraunces({
 })
 
 export const metadata: Metadata = {
-  title: 'Portfolio — NAGNIMARI Junior',
-  description: 'Projets, expérimentations et réalisations récentes.',
+  title: 'NAGNIMARI Jean-Claude Junior — Développeur Web | Portfolio',
+  description:
+    'Portfolio de NAGNIMARI Jean-Claude Junior, développeur web étudiant en Génie Logiciel à IPNET. Découvrez mes projets, expérimentations et réalisations récentes.',
+  keywords: [
+    'NAGNIMARI Jean-Claude Junior',
+    'NAGNIMARI Junior',
+    'développeur web',
+    'IPNET',
+    'génie logiciel',
+    'portfolio développeur',
+  ],
+  authors: [{ name: 'NAGNIMARI Jean-Claude Junior' }],
+  openGraph: {
+    title: 'NAGNIMARI Jean-Claude Junior — Développeur Web',
+    description:
+      'Portfolio de NAGNIMARI Jean-Claude Junior, développeur web étudiant en Génie Logiciel à IPNET.',
+    type: 'website',
+    locale: 'fr_FR',
+  },
 }
 
 export default function RootLayout({
