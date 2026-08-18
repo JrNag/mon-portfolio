@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 
@@ -9,10 +9,28 @@ export default function PostForm() {
   const [description, setDescription] = useState('')
   const [techLinks, setTechLinks] = useState('')
   const [files, setFiles] = useState<File[]>([])
+  const [previews, setPreviews] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    const urls = files.map((f) => URL.createObjectURL(f))
+    setPreviews(urls)
+    return () => urls.forEach((u) => URL.revokeObjectURL(u))
+  }, [files])
+
+  // Ajoute les nouveaux fichiers à la sélection existante (au lieu de la remplacer)
+  function handleFilesSelected(e: React.ChangeEvent<HTMLInputElement>) {
+    const newFiles = Array.from(e.target.files ?? [])
+    setFiles((prev) => [...prev, ...newFiles])
+    e.target.value = '' // permet de resélectionner le même fichier si besoin
+  }
+
+  function removeFile(index: number) {
+    setFiles((prev) => prev.filter((_, i) => i !== index))
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -140,16 +158,49 @@ export default function PostForm() {
             type="file"
             accept="image/*,video/*"
             multiple
-            onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-            required
+            onChange={handleFilesSelected}
             className="hidden"
           />
           <span className="text-sm text-[var(--ink-soft)]">
             {files.length > 0
-              ? `${files.length} fichier(s) sélectionné(s)`
-              : 'Clique pour choisir un ou plusieurs fichiers'}
+              ? `+ Ajouter d'autres fichiers (${files.length} déjà sélectionné(s))`
+              : 'Clique et sélectionne un ou plusieurs fichiers'}
+            <br />
+            <span className="text-xs text-[var(--ink-faint)]">
+              Astuce : Ctrl+clic (ou Maj+clic) pour en choisir plusieurs d&apos;un coup — tu peux aussi cliquer plusieurs fois pour en ajouter d&apos;autres
+            </span>
           </span>
         </label>
+
+        {previews.length > 0 && (
+          <div className="grid grid-cols-4 gap-2 mt-3">
+            {previews.map((url, i) => (
+              <div
+                key={i}
+                className="group relative aspect-square rounded-[var(--radius-s)] overflow-hidden border border-[var(--line)] bg-[var(--paper)]"
+              >
+                {files[i].type.startsWith('video') ? (
+                  <video src={url} className="w-full h-full object-cover" />
+                ) : (
+                  <img src={url} alt="" className="w-full h-full object-cover" />
+                )}
+                <button
+                  type="button"
+                  onClick={() => removeFile(i)}
+                  aria-label="Retirer ce fichier"
+                  className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        {previews.length > 0 && (
+          <p className="text-xs text-[var(--ink-faint)] mt-2">
+            {previews.length} fichier(s) prêt(s) à être publié(s)
+          </p>
+        )}
       </div>
 
       {error && (

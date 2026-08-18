@@ -77,7 +77,6 @@ export default async function Home() {
               const mediaCount = post.media?.length ?? 1
               const number = String(i + 1).padStart(2, '0')
 
-              // tailles, décalages et rotations variés → vrai effet "pêle-mêle"
               const widths = [
                 'w-full sm:w-[47%] lg:w-[36%]',
                 'w-full sm:w-[44%] lg:w-[24%]',
@@ -103,7 +102,6 @@ export default async function Home() {
                   style={{ animationDelay: `${i * 90}ms` }}
                 >
                   <div className="rounded-[var(--radius-l)] bg-[var(--surface)] border border-[var(--line)] p-2.5 shadow-[var(--shadow-card)] group-hover:shadow-[var(--shadow-pop)] group-hover:border-[var(--ink)]/15 transition-shadow duration-500">
-                    {/* ---- média ---- */}
                     <div className={`relative overflow-hidden rounded-[calc(var(--radius-l)-8px)] bg-[var(--ink)]/5 ${aspect}`}>
                       {post.media_type === 'video' ? (
                         <video
@@ -135,7 +133,6 @@ export default async function Home() {
                       )}
                     </div>
 
-                    {/* ---- légende façon polaroid ---- */}
                     <div className="px-2.5 pt-4 pb-3">
                       <div className="flex items-start justify-between gap-3 mb-1.5">
                         <h3 className="font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight group-hover:text-[var(--accent)] transition-colors">
