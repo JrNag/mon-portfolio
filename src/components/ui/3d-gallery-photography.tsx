@@ -264,6 +264,8 @@ function Scene({
     dragging: false,
     lastX: 0,
     active: -1,
+    pending: 0, // avance directe (en unités de profondeur) pilotée par le scroll de la page
+    flex: 0, // déformation visuelle due au scroll
   })
 
   const cbRef = useRef({ onActiveChange, onItemClick })
@@ -293,7 +295,11 @@ function Scene({
       lastY = window.scrollY
       const r = el.getBoundingClientRect()
       if (r.bottom < 0 || r.top > window.innerHeight) return // section hors écran
-      c.velocity = Math.max(-4, Math.min(4, c.velocity + dy * 0.006 * speed))
+      // le scroll de la page fait avancer les projets directement :
+      // ~60% d'une hauteur d'écran de scroll = 1 projet
+      const pxPerProject = window.innerHeight * 0.6
+      c.pending += (dy / pxPerProject) * (DEPTH_RANGE / V)
+      c.flex = Math.max(-3, Math.min(3, c.flex + dy * 0.004))
     }
     const onKey = (e: KeyboardEvent) => {
       if (!c.inside) return
@@ -346,7 +352,7 @@ function Scene({
       document.removeEventListener('keydown', onKey)
       window.removeEventListener('scroll', onPageScroll)
     }
-  }, [gl, speed, captureWheel])
+  }, [gl, speed, captureWheel, V])
 
   /* ---------------------------------- boucle ---------------------------------- */
   useFrame((state, rawDelta) => {
@@ -357,6 +363,9 @@ function Scene({
     if (!c.auto && !c.dragging && performance.now() - c.last > 3000) c.auto = true
     if (c.auto) c.velocity += 0.3 * delta
     c.velocity *= Math.pow(0.95, delta * 60)
+    c.flex *= Math.pow(0.9, delta * 60)
+    const pendingZ = c.pending
+    c.pending = 0
 
     const time = state.clock.getElapsedTime()
     const fi = fadeSettings.fadeIn
@@ -371,7 +380,7 @@ function Scene({
 
     planes.forEach((p, i) => {
       // avance + bouclage
-      let z = p.z + c.velocity * delta * 10
+      let z = p.z + c.velocity * delta * 10 + pendingZ
       if (z >= DEPTH_RANGE) {
         const w = Math.floor(z / DEPTH_RANGE)
         z -= DEPTH_RANGE * w
@@ -424,7 +433,7 @@ function Scene({
       mat.uniforms.opacity.value = opacity
       mat.uniforms.blurAmount.value = blur
       mat.uniforms.time.value = time
-      mat.uniforms.scrollForce.value = c.velocity
+      mat.uniforms.scrollForce.value = c.velocity + c.flex
       if (opacity <= 0.6) mat.uniforms.isHovered.value = 0
 
       // projet "actif" = le plus proche de la zone de netteté

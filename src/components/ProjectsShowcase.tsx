@@ -38,7 +38,9 @@ export default function ProjectsShowcase({ projects }: { projects: ShowcaseProje
   if (!current) return null
 
   return (
-    <div className="relative h-screen min-h-[560px] w-full overflow-hidden bg-white text-[var(--ink)]">
+    // Conteneur haut = durée du scroll pendant lequel la section reste épinglée
+    <div className="relative" style={{ height: `${(items.length * 0.6 + 1) * 100}dvh` }}>
+      <div className="sticky top-0 h-dvh w-full overflow-hidden bg-white text-[var(--ink)]">
       <InfiniteGallery
         items={items}
         speed={1.5}
@@ -64,9 +66,11 @@ export default function ProjectsShowcase({ projects }: { projects: ShowcaseProje
       </span>
 
       {/* Aide */}
-      <p className="pointer-events-none absolute bottom-8 left-0 right-0 text-center font-[family-name:var(--font-display)] text-sm tracking-wide text-black/50">
-        Scrollez et cliquez sur une image pour l&apos;ouvrir
+      <p className="pointer-events-none absolute bottom-8 left-0 right-0 px-6 text-center font-[family-name:var(--font-display)] text-sm tracking-wide text-black/50">
+        <span className="md:hidden">Faites défiler ou glissez, puis touchez une image pour l&apos;ouvrir</span>
+        <span className="hidden md:inline">Scrollez ou glissez, puis cliquez sur une image pour l&apos;ouvrir</span>
       </p>
+      </div>
     </div>
   )
 }
