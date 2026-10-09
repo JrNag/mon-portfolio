@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase'
 import { HeroSection } from '@/components/blocks/hero-section-5'
 import ProjectsShowcase from '@/components/ProjectsShowcase'
+import AutresCompetences from '@/components/AutresCompetences'
 
 export const revalidate = 0
 
@@ -88,6 +89,9 @@ export default async function Home() {
           <ProjectsShowcase projects={showcaseProjects} />
         )}
       </section>
+
+      {/* ================= AUTRES COMPÉTENCES (animation) ================= */}
+      <AutresCompetences />
 
       {/* ================= FOOTER ================= */}
       <footer id="a-propos" className="border-t border-[var(--line)]">
